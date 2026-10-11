@@ -124,6 +124,17 @@ do
   --  See `:help 'clipboard'`
   vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
+  -- Over SSH (alien -> mini), copy to the local terminal's clipboard via OSC 52
+  -- tmux panes don't inherit SSH_TTY, so check TMUX too
+  if os.getenv 'SSH_TTY' or os.getenv 'SSH_CONNECTION' or os.getenv 'TMUX' then
+    local osc52 = require 'vim.ui.clipboard.osc52'
+    vim.g.clipboard = {
+      name = 'OSC 52',
+      copy = { ['+'] = osc52.copy '+', ['*'] = osc52.copy '*' },
+      paste = { ['+'] = osc52.paste '+', ['*'] = osc52.paste '*' },
+    }
+  end
+
   -- Enable break indent
   vim.o.breakindent = true
 
