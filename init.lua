@@ -125,7 +125,8 @@ do
   vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
   -- Over SSH (alien -> mini), copy to the local terminal's clipboard via OSC 52
-  if os.getenv 'SSH_TTY' then
+  -- tmux panes don't inherit SSH_TTY, so check TMUX too
+  if os.getenv 'SSH_TTY' or os.getenv 'SSH_CONNECTION' or os.getenv 'TMUX' then
     local osc52 = require 'vim.ui.clipboard.osc52'
     vim.g.clipboard = {
       name = 'OSC 52',
